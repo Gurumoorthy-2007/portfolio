@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GURUMOORTHY S - Portfolio</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10/dist/framer-motion.js"></script>
+    
+    <!-- Babel Standalone for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Space Mono', monospace;
+          overflow-x: hidden;
+        }
+
+        #root {
+          min-height: 100vh;
+        }
+
+        .portfolio-container {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #0a0a19 0%, #1a1a2e 50%, #16213e 100%);
+          color: #ffffff;
+          font-family: 'Space Mono', monospace;
+          overflow-x: hidden;
+          position: relative;
+        }
+
+        /* Gradient Blur Backgrounds */
+        .gradient-blur-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        .gradient-blur {
+          position: absolute;
+          width: 500px;
+          height: 500px;
+          border-radius: 50%;
+          filter: blur(100px);
+          opacity: 0.3;
+          will-change: transform, opacity;
+          pointer-events: none;
+        }
+
+        /* GS Logo Menu Button */
+        .gs-menu-button {
+          position: fixed;
+          top: 30px;
+          left: 30px;
+          z-index: 1001;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .gs-menu-button:hover {
+          transform: scale(1.1) rotate(5deg);
+        }
+
+        .gs-menu-button.menu-open {
+          transform: scale(1.05);
+        }
+
+        .logo-circle {
+          width: 70px;
+          height: 70px;
+          background: linear-gradient(135deg, #00f2fe, #4facfe, #6a00f4);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Orbitron', sans-serif;
+          font-size: 1.8rem;
+          font-weight: 900;
+          color: #0a0a19;
+          box-shadow: 0 0 30px rgba(0, 242, 254, 0.5);
+          transition: all 0.3s ease;
+          border: 3px solid rgba(0, 242, 254, 0.3);
+          position: relative;
+        }
+
+        .logo-circle::before {
+          content: '';
+          position: absolute;
+          top: -5px;
+          left: -5px;
+          right: -5px;
+          bottom: -5px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #00f2fe, #4facfe);
+          opacity: 0.3;
+          filter: blur(10px);
+          animation: logoPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.3;
+          }
+          50% {
+            transform: scale(1.1);
+            opacity: 0.6;
+          }
+        }
+
+        .gs-menu-button:hover .logo-circle {
+          box-shadow: 0 0 50px rgba(0, 242, 254, 0.8);
+          border-color: rgba(0, 242, 254, 0.6);
+        }
+
+        .gs-menu-button.menu-open .logo-circle {
+          box-shadow: 0 0 50px rgba(0, 242, 254, 0.9);
+          border-color: #00f2fe;
+        }
+
+        .gs-menu-button.menu-open .logo-circle::before {
+          animation: none;
+          opacity: 0.7;
+        }
+
+        /* Menu Panel */
+        .menu-panel {
+          position: fixed;
+          top: 120px;
+          left: 30px;
+          background: rgba(10, 10, 25, 0.95);
+          backdrop-filter: blur(30px);
+          border: 1px solid rgba(0, 242, 254, 0.3);
+          border-radius: 25px;
+          padding: 25px;
+          min-width: 280px;
+          max-width: 320px;
+          z-index: 1000;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 242, 254, 0.2);
+          max-height: calc(100vh - 150px);
+          overflow-y: auto;
+        }
+
+        /* Custom Scrollbar */
+        .menu-panel::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .menu-panel::-webkit-scrollbar-track {
+          background: rgba(0, 242, 254, 0.05);
+          border-radius: 10px;
+        }
+
+        .menu-panel::-webkit-scrollbar-thumb {
+          background: rgba(0, 242, 254, 0.3);
+          border-radius: 10px;
+        }
+
+        .menu-panel::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 242, 254, 0.5);
+        }
+
+        .menu-panel::before {
+          content: '';
+          position: absolute;
+          top: -20px;
+          left: 35px;
+          width: 0;
+          height: 0;
+          border-left: 15px solid transparent;
+          border-right: 15px solid transparent;
+          border-bottom: 20px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .menu-header {
+          margin-bottom: 20px;
+          padding-bottom: 15px;
+          border-bottom: 2px solid rgba(0, 242, 254, 0.2);
+        }
+
+        .menu-title {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: #00f2fe;
+          margin-bottom: 5px;
+        }
+
+        .menu-subtitle {
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.6);
+        }
+
+        .menu-items {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .menu-item {
+          width: 100%;
+          background: transparent;
+          border: 1px solid rgba(0, 242, 254, 0.2);
+          color: #fff;
+          padding: 15px 20px;
+          border-radius: 15px;
+          cursor: pointer;
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          text-align: left;
+          position: relative;
+        }
+
+        .menu-item::after {
+          content: '';
+          position: absolute;
+          right: 15px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #00f2fe;
+          opacity: 0;
+          transition: all 0.3s ease;
+          box-shadow: 0 0 10px rgba(0, 242, 254, 0.8);
+        }
+
+        .menu-item:hover {
+          background: rgba(0, 242, 254, 0.1);
+          border-color: #00f2fe;
+          transform: translateX(5px);
+        }
+
+        .menu-item.active {
+          background: rgba(0, 242, 254, 0.2);
+          border-color: #00f2fe;
+          box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+
+        .menu-item.active::after {
+          opacity: 1;
+          animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+          0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.8);
+          }
+          50% {
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 1);
+          }
+        }
+
+        .menu-item-icon {
+          font-size: 1.3rem;
+        }
+
+        .menu-item-text {
+          flex: 1;
+        }
+
+        /* Overlay for click outside */
+        .menu-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.3);
+          z-index: 999;
+          backdrop-filter: blur(2px);
+        }
+
+        /* Pages */
+        .pages-container {
+          position: relative;
+          z-index: 1;
+          min-height: 100vh;
+        }
+
+        .page {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 100px 20px 50px;
+        }
+
+        .page-content {
+          max-width: 1200px;
+          width: 100%;
+        }
+
+        .page-title {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 3.5rem;
+          font-weight: 900;
+          text-align: center;
+          margin-bottom: 60px;
+          background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #f093fb 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-shadow: 0 0 80px rgba(0, 242, 254, 0.5);
+        }
+
+        /* Hero Page */
+        .hero-page {
+          text-align: center;
+        }
+
+        .hero-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 30px;
+        }
+
+        .hero-avatar {
+          position: relative;
+          width: 200px;
+          height: 200px;
+        }
+
+        .avatar-glow {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 220px;
+          height: 220px;
+          background: radial-gradient(circle, rgba(0, 242, 254, 0.3), transparent);
+          border-radius: 50%;
+          filter: blur(25px);
+          animation: pulse 3s ease-in-out infinite;
+          will-change: transform;
+        }
+
+        .avatar-circle {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, #00f2fe, #4facfe, #6a00f4);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Orbitron', sans-serif;
+          font-size: 4rem;
+          font-weight: 900;
+          color: #0a0a19;
+          box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
+          will-change: transform;
+        }
+
+        @keyframes pulse {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); }
+          50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .hero-title {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 4.5rem;
+          font-weight: 900;
+          background: linear-gradient(135deg, #00f2fe, #4facfe, #f093fb);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: 0.1em;
+        }
+
+        .hero-subtitle {
+          font-size: 1.8rem;
+          font-family: 'Playfair Display', serif;
+        }
+
+        .gradient-text {
+          background: linear-gradient(135deg, #f093fb, #4facfe);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .hero-description {
+          font-size: 1.2rem;
+          color: rgba(255, 255, 255, 0.7);
+          max-width: 600px;
+          line-height: 1.6;
+        }
+
+        .hero-icons {
+          display: flex;
+          gap: 30px;
+          font-size: 3rem;
+        }
+
+        .icon-3d {
+          cursor: pointer;
+          will-change: transform;
+        }
+
+        .icon-face {
+          font-size: 4rem;
+          text-shadow: 0 0 30px rgba(0, 242, 254, 0.5);
+          will-change: transform;
+        }
+
+        .hero-stats {
+          display: flex;
+          gap: 50px;
+          margin-top: 30px;
+        }
+
+        .stat-item {
+          text-align: center;
+        }
+
+        .stat-number {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 3rem;
+          font-weight: 900;
+          color: #00f2fe;
+          text-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
+        }
+
+        .stat-label {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.6);
+          margin-top: 5px;
+        }
+
+        .scroll-indicator {
+          position: absolute;
+          bottom: 30px;
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 0.9rem;
+        }
+
+        .scroll-arrow {
+          font-size: 2rem;
+          margin-top: 10px;
+        }
+
+        /* About & Other Pages - Common Styles */
+        .about-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 30px;
+          margin-bottom: 50px;
+        }
+
+        .about-card {
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(0, 242, 254, 0.2);
+          border-radius: 20px;
+          padding: 30px;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          will-change: transform;
+        }
+
+        .about-card:hover {
+          transform: scale(1.02);
+          box-shadow: 0 20px 60px rgba(0, 242, 254, 0.3);
+        }
+
+        .card-icon {
+          font-size: 3rem;
+          margin-bottom: 20px;
+        }
+
+        .about-card h3 {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 1.5rem;
+          margin-bottom: 15px;
+          color: #00f2fe;
+        }
+
+        .about-card p {
+          line-height: 1.6;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 10px;
+        }
+
+        .highlight {
+          color: #4facfe;
+          font-weight: bold;
+        }
+
+        .year {
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 0.9rem;
+        }
+
+        .location {
+          color: #f093fb;
+          margin-top: 10px;
+        }
+
+        .achievement {
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 0.9rem;
+          padding-left: 10px;
+        }
+
+        .skills-showcase {
+          text-align: center;
+        }
+
+        .section-subtitle {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 1.5rem;
+          margin-bottom: 25px;
+          color: #00f2fe;
+        }
+
+        .skills-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+          justify-content: center;
+        }
+
+        .skill-tag {
+          background: rgba(0, 242, 254, 0.1);
+          border: 1px solid rgba(0, 242, 254, 0.3);
+          padding: 12px 25px;
+          border-radius: 30px;
+          font-size: 0.95rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+          transform: scale(1.1);
+          background: rgba(0, 242, 254, 0.2);
+        }
+
+        /* CTA Button Styles */
+        .cta-content {
+          max-width: 800px;
+          margin: 0 auto;
+          text-align: center;
+        }
+
+        .cta-title {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 4rem;
+          font-weight: 900;
+          margin-bottom: 30px;
+          background: linear-gradient(135deg, #f093fb, #f5576c, #4facfe);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .cta-description {
+          font-size: 1.3rem;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 50px;
+          line-height: 1.6;
+        }
+
+        .cta-buttons {
+          display: flex;
+          gap: 30px;
+          justify-content: center;
+          margin-bottom: 60px;
+          flex-wrap: wrap;
+        }
+
+        .cta-button {
+          position: relative;
+          padding: 20px 50px;
+          font-size: 1.2rem;
+          font-family: 'Orbitron', sans-serif;
+          border-radius: 50px;
+          border: none;
+          cursor: pointer;
+          overflow: hidden;
+          text-decoration: none;
+          display: inline-block;
+          transition: all 0.3s ease;
+        }
+
+        .cta-button.primary {
+          background: linear-gradient(135deg, #00f2fe, #4facfe);
+          color: #0a0a19;
+          font-weight: 700;
+        }
+
+        .cta-button.secondary {
+          background: rgba(79, 172, 254, 0.2);
+          color: #fff;
+          border: 2px solid #4facfe;
+        }
+
+        .cta-button:hover {
+          transform: scale(1.05);
+          box-shadow: 0 0 40px rgba(0, 242, 254, 0.6);
+        }
+
+        .contact-info {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          align-items: center;
+        }
+
+        .info-item {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          font-size: 1.1rem;
+          color: rgba(255, 255, 255, 0.8);
+          transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+          transform: translateX(10px);
+        }
+
+        .info-icon {
+          font-size: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+          .hero-title {
+            font-size: 3rem;
+          }
+
+          .page-title {
+            font-size: 2.5rem;
+          }
+
+          .cta-title {
+            font-size: 2.5rem;
+          }
+
+          .hero-stats {
+            flex-wrap: wrap;
+            gap: 30px;
+          }
+
+          .menu-panel {
+            top: 110px;
+            left: 20px;
+            min-width: 260px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .gs-menu-button {
+            top: 20px;
+            left: 20px;
+          }
+
+          .logo-circle {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+          }
+
+          .menu-panel {
+            top: 95px;
+            left: 15px;
+            right: 15px;
+            min-width: auto;
+            max-width: calc(100% - 30px);
+          }
+
+          .hero-title {
+            font-size: 2.2rem;
+          }
+
+          .hero-subtitle {
+            font-size: 1.3rem;
+          }
+
+          .page-title {
+            font-size: 2rem;
+            margin-bottom: 40px;
+          }
+
+          .about-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .cta-buttons {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .stat-number {
+            font-size: 2rem;
+          }
+
+          .hero-icons {
+            gap: 20px;
+          }
+
+          .icon-face {
+            font-size: 3rem;
+          }
+
+          /* Contact page responsive */
+          .page-content > div[style*="grid-template-columns: 1.5fr 1fr"] {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 30px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .page {
+            padding: 80px 15px 40px;
+          }
+
+          .gs-menu-button {
+            top: 15px;
+            left: 15px;
+          }
+
+          .logo-circle {
+            width: 55px;
+            height: 55px;
+            font-size: 1.4rem;
+          }
+
+          .menu-panel {
+            top: 85px;
+            left: 10px;
+            right: 10px;
+            padding: 20px;
+          }
+
+          .menu-title {
+            font-size: 1.1rem;
+          }
+
+          .menu-item {
+            padding: 12px 15px;
+            font-size: 0.9rem;
+          }
+
+          .hero-title {
+            font-size: 1.8rem;
+            letter-spacing: 0.05em;
+          }
+
+          .hero-avatar {
+            width: 150px;
+            height: 150px;
+          }
+
+          .avatar-circle {
+            font-size: 3rem;
+          }
+
+          .page-title {
+            font-size: 1.8rem;
+          }
+
+          .cta-title {
+            font-size: 1.8rem;
+          }
+
+          .gradient-blur {
+            width: 300px;
+            height: 300px;
+          }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { motion, AnimatePresence } = Motion;
+
+        // Particles Background Component
+        const ParticlesBackground = () => {
+          const canvasRef = useRef(null);
+
+          useEffect(() => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 50;
+            let mouseX = 0;
+            let mouseY = 0;
+            let frameCount = 0;
+
+            class Particle {
+              constructor() {
+                this.reset();
+              }
+
+              reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.radius = Math.random() * 1.5 + 0.5;
+                this.opacity = Math.random() * 0.4 + 0.2;
+              }
+
+              update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (frameCount % 2 === 0) {
+                  const dx = mouseX - this.x;
+                  const dy = mouseY - this.y;
+                  const distance = Math.sqrt(dx * dx + dy * dy);
+                  
+                  if (distance < 120) {
+                    const force = (120 - distance) / 120;
+                    this.vx -= (dx / distance) * force * 0.1;
+                    this.vy -= (dy / distance) * force * 0.1;
+                  }
+                }
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+                this.vx *= 0.99;
+                this.vy *= 0.99;
+              }
+
+              draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 242, 254, ${this.opacity})`;
+                ctx.fill();
+              }
+            }
+
+            for (let i = 0; i < particleCount; i++) {
+              particles.push(new Particle());
+            }
+
+            let lastMouseUpdate = 0;
+            const handleMouseMove = (e) => {
+              const now = Date.now();
+              if (now - lastMouseUpdate > 50) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                lastMouseUpdate = now;
+              }
+            };
+
+            const animate = () => {
+              frameCount++;
+              ctx.fillStyle = 'rgba(10, 10, 25, 0.15)';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+              particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+              });
+
+              if (frameCount % 3 === 0) {
+                for (let i = 0; i < particles.length; i++) {
+                  for (let j = i + 1; j < Math.min(i + 5, particles.length); j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 80) {
+                      ctx.beginPath();
+                      ctx.strokeStyle = `rgba(0, 242, 254, ${0.15 * (1 - distance / 80)})`;
+                      ctx.lineWidth = 0.5;
+                      ctx.moveTo(particles[i].x, particles[i].y);
+                      ctx.lineTo(particles[j].x, particles[j].y);
+                      ctx.stroke();
+                    }
+                  }
+                }
+              }
+
+              requestAnimationFrame(animate);
+            };
+
+            window.addEventListener('mousemove', handleMouseMove, { passive: true });
+            const handleResize = () => {
+              canvas.width = window.innerWidth;
+              canvas.height = window.innerHeight;
+            };
+            window.addEventListener('resize', handleResize);
+
+            animate();
+
+            return () => {
+              window.removeEventListener('mousemove', handleMouseMove);
+              window.removeEventListener('resize', handleResize);
+            };
+          }, []);
+
+          return React.createElement('canvas', {
+            ref: canvasRef,
+            style: {
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 0,
+              pointerEvents: 'none',
+            }
+          });
+        };
+
+        // Gradient Blur Background
+        const GradientBlur = ({ page }) => {
+          const colors = {
+            hero: ['#00f2fe', '#4facfe'],
+            cta: ['#f093fb', '#4facfe'],
+            resume: ['#4facfe', '#43e97b'],
+            projects: ['#fa709a', '#30cfd0'],
+            skills: ['#a8edea', '#4facfe'],
+            contact: ['#00f2fe', '#f093fb'],
+            articles: ['#fcb69f', '#4facfe'],
+            profiles: ['#08ffc8', '#4facfe'],
+            social: ['#f093fb', '#00f2fe']
+          };
+
+          const currentColors = colors[page] || colors.hero;
+
+          return (
+            <div className="gradient-blur-container">
+              {currentColors.map((color, index) => (
+                <motion.div
+                  key={index}
+                  className="gradient-blur"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ 
+                    opacity: [0.2, 0.4, 0.2], 
+                    scale: [1, 1.1, 1],
+                    x: [0, 30, 0],
+                    y: [0, 30, 0],
+                  }}
+                  transition={{
+                    duration: 10 + index * 2,
+                    repeat: Infinity,
+                    repeatType: 'reverse',
+                    ease: 'easeInOut',
+                  }}
+                  style={{
+                    background: `radial-gradient(circle, ${color}60 0%, transparent 70%)`,
+                    left: `${30 + index * 40}%`,
+                    top: `${30 + index * 20}%`,
+                  }}
+                />
+              ))}
+            </div>
+          );
+        };
+
+        // Simple Pages (just showing structure - you can add more content)
+        const HeroPage = () => (
+          <div className="page hero-page">
+            <div className="hero-content">
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ duration: 1.2, type: 'spring', bounce: 0.4 }}
+                className="hero-avatar"
+              >
+                <div className="avatar-glow"></div>
+                <div className="avatar-circle">GS</div>
+              </motion.div>
+
+              <motion.h1
+                className="hero-title"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+              >
+                GURUMOORTHY S
+              </motion.h1>
+
+              <motion.div
+                className="hero-subtitle"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+              >
+                <span className="gradient-text">Aspiring Software Engineer</span>
+              </motion.div>
+
+              <motion.p
+                className="hero-description"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7, duration: 0.8 }}
+              >
+                Building innovative solutions with code, creativity, and cutting-edge technology
+              </motion.p>
+
+              <motion.div
+                className="hero-icons"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.8 }}
+              >
+                <div className="icon-3d"><div className="icon-face">💻</div></div>
+                <div className="icon-3d"><div className="icon-face">🚀</div></div>
+                <div className="icon-3d"><div className="icon-face">⚡</div></div>
+                <div className="icon-3d"><div className="icon-face">🎨</div></div>
+              </motion.div>
+
+              <motion.div
+                className="hero-stats"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.2, duration: 0.6 }}
+              >
+                <div className="stat-item">
+                  <div className="stat-number">10+</div>
+                  <div className="stat-label">Certifications</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-number">7+</div>
+                  <div className="stat-label">Tech Skills</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-number">1+</div>
+                  <div className="stat-label">Projects</div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        );
+
+        const AboutPage = () => (
+          <div className="page">
+            <div className="page-content">
+              <h2 className="page-title">About Me</h2>
+              <div className="about-grid">
+                <motion.div className="about-card" whileHover={{ scale: 1.02 }}>
+                  <div className="card-icon">🎓</div>
+                  <h3>Education</h3>
+                  <p className="highlight">B.Tech in Computer Science</p>
+                  <p>Sri Manakula Vinayagar Engineering College</p>
+                  <p className="year">2024 - 2028 • CGPA: 7.0/10</p>
+                  <p className="location">📍 Pondicherry, India</p>
+                </motion.div>
+
+                <motion.div className="about-card" whileHover={{ scale: 1.02 }}>
+                  <div className="card-icon">💼</div>
+                  <h3>Experience</h3>
+                  <p className="highlight">Intern at InAmigos Foundation</p>
+                  <p>Community development & empowerment initiatives</p>
+                  <p className="achievement">• Campaign Design</p>
+                  <p className="achievement">• Social Impact Projects</p>
+                </motion.div>
+
+                <motion.div className="about-card" whileHover={{ scale: 1.02 }}>
+                  <div className="card-icon">🎯</div>
+                  <h3>Objective</h3>
+                  <p>Passionate about developing innovative software solutions</p>
+                  <p className="highlight">Seeking opportunities for growth</p>
+                </motion.div>
+              </div>
+
+              <div className="skills-showcase">
+                <h3 className="section-subtitle">Quick Skills</h3>
+                <div className="skills-tags">
+                  {['C', 'Python', 'Java', 'JavaScript', 'HTML/CSS', 'Git', 'VS Code'].map(skill => (
+                    <span key={skill} className="skill-tag">{skill}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+        const CTAPage = () => (
+          <div className="page">
+            <div className="cta-content">
+              <h2 className="cta-title">Let's Build Something Amazing</h2>
+              <p className="cta-description">
+                Ready to collaborate on your next project?
+              </p>
+              <div className="cta-buttons">
+                <a href="mailto:gurumoorthys287@gmail.com" className="cta-button primary">
+                  <span>📧 Contact Me</span>
+                </a>
+                <a href="tel:+919361331302" className="cta-button secondary">
+                  <span>📞 Call Me</span>
+                </a>
+              </div>
+              <div className="contact-info">
+                <div className="info-item">
+                  <span className="info-icon">📧</span>
+                  <span>gurumoorthys287@gmail.com</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-icon">📍</span>
+                  <span>Puducherry, India</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-icon">📱</span>
+                  <span>+91 9361331302</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+        const ResumePage = () => {
+          const [isDownloading, setIsDownloading] = useState(false);
+
+          const handleDownload = () => {
+            setIsDownloading(true);
+            setTimeout(() => {
+              alert('Resume download would start here. In production, link to your actual PDF file.');
+              setIsDownloading(false);
+            }, 1500);
+          };
+
+          return (
+            <div className="page">
+              <div className="page-content">
+                <motion.h2
+                  className="page-title"
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Download Resume
+                </motion.h2>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '50px' }}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4 }}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(67, 233, 123, 0.3)',
+                      borderRadius: '20px',
+                      padding: '50px',
+                      textAlign: 'center'
+                    }}
+                  >
+                    <div style={{ fontSize: '5rem', marginBottom: '30px' }}>📄</div>
+                    <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '2rem', marginBottom: '15px', color: '#43e97b' }}>
+                      GURUMOORTHY S
+                    </h3>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: '30px' }}>
+                      Complete Resume with Projects, Skills & Certifications
+                    </p>
+                    
+                    <button
+                      onClick={handleDownload}
+                      disabled={isDownloading}
+                      style={{
+                        background: 'linear-gradient(135deg, #43e97b, #38f9d7)',
+                        color: '#0a0a19',
+                        border: 'none',
+                        padding: '18px 40px',
+                        fontSize: '1.2rem',
+                        fontFamily: 'Orbitron, sans-serif',
+                        fontWeight: '700',
+                        borderRadius: '50px',
+                        cursor: isDownloading ? 'not-allowed' : 'pointer',
+                        opacity: isDownloading ? 0.6 : 1,
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isDownloading) {
+                          e.target.style.transform = 'scale(1.05)';
+                          e.target.style.boxShadow = '0 0 40px rgba(67, 233, 123, 0.6)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'scale(1)';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                    >
+                      {isDownloading ? '⏳ Downloading...' : '📥 Download PDF'}
+                    </button>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 }}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(0, 242, 254, 0.2)',
+                      borderRadius: '20px',
+                      padding: '40px'
+                    }}
+                  >
+                    <h4 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.5rem', marginBottom: '25px', color: '#00f2fe' }}>
+                      What's Inside:
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                      {[
+                        'Educational Background',
+                        'Technical Skills & Expertise',
+                        '10+ Professional Certifications',
+                        'IoT Project Portfolio',
+                        'Internship Experience',
+                        'Contact Information'
+                      ].map((item, index) => (
+                        <motion.div
+                          key={item}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.7 + index * 0.1 }}
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '1.05rem',
+                            transition: 'all 0.3s ease',
+                            cursor: 'pointer'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.transform = 'translateX(10px)';
+                            e.target.style.color = '#00f2fe';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.transform = 'translateX(0)';
+                            e.target.style.color = 'rgba(255, 255, 255, 0.7)';
+                          }}
+                        >
+                          ✓ {item}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          );
+        };
+        const ProjectsPage = () => {
+          const projects = [
+            {
+              id: 1,
+              title: 'Air Quality Index Meter',
+              description: 'Smart IoT device monitoring real-time air quality with sensors',
+              tech: ['Arduino', 'Sensors', 'IoT', 'C++'],
+              features: [
+                'PM2.5, PM10, CO2 monitoring',
+                'AQI calculation',
+                'Mobile alerts',
+                'Cloud integration'
+              ],
+              icon: '🌡️',
+              color: '#00f2fe'
+            }
+          ];
+
+          return (
+            <div className="page">
+              <div className="page-content">
+                <motion.h2
+                  className="page-title"
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Featured Projects
+                </motion.h2>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px', marginBottom: '50px' }}>
+                  {projects.map((project, index) => (
+                    <motion.div
+                      key={project.id}
+                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ delay: 0.3 + index * 0.2, type: 'spring' }}
+                      whileHover={{ scale: 1.03, boxShadow: `0 20px 60px ${project.color}40` }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(0, 242, 254, 0.2)',
+                        borderRadius: '25px',
+                        padding: '40px',
+                        transition: 'all 0.3s ease',
+                        willChange: 'transform'
+                      }}
+                    >
+                      <div style={{ fontSize: '4rem', marginBottom: '25px' }}>
+                        {project.icon}
+                      </div>
+                      
+                      <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.8rem', marginBottom: '15px', color: '#00f2fe' }}>
+                        {project.title}
+                      </h3>
+                      <p style={{ color: 'rgba(255, 255, 255, 0.7)', lineHeight: 1.6, marginBottom: '25px' }}>
+                        {project.description}
+                      </p>
+
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '25px' }}>
+                        {project.tech.map((tech, i) => (
+                          <span
+                            key={tech}
+                            style={{
+                              background: 'rgba(79, 172, 254, 0.2)',
+                              border: '1px solid rgba(79, 172, 254, 0.4)',
+                              padding: '8px 18px',
+                              borderRadius: '20px',
+                              fontSize: '0.85rem',
+                              color: '#4facfe'
+                            }}
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div style={{ marginTop: '25px' }}>
+                        <h4 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.1rem', marginBottom: '15px', color: '#f093fb' }}>
+                          Key Features:
+                        </h4>
+                        {project.features.map((feature, i) => (
+                          <div key={feature} style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '10px', fontSize: '0.95rem' }}>
+                            ✓ {feature}
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                  style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', fontSize: '1.2rem' }}
+                >
+                  <p>More projects coming soon... 🚀</p>
+                </motion.div>
+              </div>
+            </div>
+          );
+        };
+        const SkillsPage = () => {
+          const skillCategories = [
+            {
+              name: 'Programming',
+              skills: [
+                { name: 'C', level: 80, icon: '💻' },
+                { name: 'Python', level: 85, icon: '🐍' },
+                { name: 'Java', level: 75, icon: '☕' },
+                { name: 'JavaScript', level: 70, icon: '⚡' }
+              ]
+            },
+            {
+              name: 'Web Development',
+              skills: [
+                { name: 'HTML/CSS', level: 80, icon: '🎨' },
+                { name: 'React', level: 65, icon: '⚛️' }
+              ]
+            },
+            {
+              name: 'Tools & Technologies',
+              skills: [
+                { name: 'Git', level: 75, icon: '🔧' },
+                { name: 'VS Code', level: 90, icon: '📝' },
+                { name: 'Microsoft Office', level: 85, icon: '📊' }
+              ]
+            },
+            {
+              name: 'Specialized',
+              skills: [
+                { name: 'Data Science', level: 70, icon: '📈' },
+                { name: 'Machine Learning', level: 65, icon: '🤖' },
+                { name: 'IoT', level: 75, icon: '🌐' }
+              ]
+            }
+          ];
+
+          return (
+            <div className="page">
+              <div className="page-content">
+                <motion.h2
+                  className="page-title"
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Technical Skills
+                </motion.h2>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
+                  {skillCategories.map((category, catIndex) => (
+                    <motion.div
+                      key={category.name}
+                      initial={{ opacity: 0, x: -50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + catIndex * 0.1 }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(0, 242, 254, 0.2)',
+                        borderRadius: '20px',
+                        padding: '30px'
+                      }}
+                    >
+                      <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.5rem', marginBottom: '25px', color: '#00f2fe', textAlign: 'center' }}>
+                        {category.name}
+                      </h3>
+                      
+                      {category.skills.map((skill, skillIndex) => (
+                        <motion.div
+                          key={skill.name}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.4 + catIndex * 0.1 + skillIndex * 0.05 }}
+                          whileHover={{ scale: 1.02, x: 10 }}
+                          style={{ marginBottom: '25px', cursor: 'pointer' }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                            <span style={{ fontSize: '1.5rem' }}>{skill.icon}</span>
+                            <span style={{ flex: 1, fontSize: '1.1rem', color: 'rgba(255, 255, 255, 0.9)' }}>{skill.name}</span>
+                            <motion.span 
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.6 + catIndex * 0.1 + skillIndex * 0.05 }}
+                              style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1rem', color: '#4facfe' }}
+                            >
+                              {skill.level}%
+                            </motion.span>
+                          </div>
+                          
+                          <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '10px', overflow: 'hidden' }}>
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${skill.level}%` }}
+                              transition={{ 
+                                delay: 0.5 + catIndex * 0.1 + skillIndex * 0.05,
+                                duration: 1,
+                                type: 'spring'
+                              }}
+                              style={{
+                                height: '100%',
+                                background: 'linear-gradient(90deg, #00f2fe, #4facfe, #f093fb)',
+                                borderRadius: '10px',
+                                boxShadow: '0 0 20px rgba(0, 242, 254, 0.5)'
+                              }}
+                            />
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        };
+        const ContactPage = () => {
+          const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+          const [isSubmitting, setIsSubmitting] = useState(false);
+          const [isSuccess, setIsSuccess] = useState(false);
+
+          const handleSubmit = (e) => {
+            e.preventDefault();
+            setIsSubmitting(true);
+            setTimeout(() => {
+              setIsSubmitting(false);
+              setIsSuccess(true);
+              setTimeout(() => {
+                setIsSuccess(false);
+                setFormData({ name: '', email: '', message: '' });
+              }, 3000);
+            }, 1500);
+          };
+
+          return (
+            <div className="page">
+              <div className="page-content">
+                <motion.h2
+                  className="page-title"
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Get In Touch
+                </motion.h2>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '50px' }}>
+                  <motion.form
+                    onSubmit={handleSubmit}
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}
+                  >
+                    <input
+                      type="text"
+                      placeholder="Your Name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '18px 25px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(0, 242, 254, 0.3)',
+                        borderRadius: '15px',
+                        color: '#fff',
+                        fontFamily: 'Space Mono, monospace',
+                        fontSize: '1rem',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#00f2fe';
+                        e.target.style.boxShadow = '0 0 20px rgba(0, 242, 254, 0.3)';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(0, 242, 254, 0.3)';
+                        e.target.style.boxShadow = 'none';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                      }}
+                    />
+
+                    <input
+                      type="email"
+                      placeholder="Your Email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '18px 25px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(0, 242, 254, 0.3)',
+                        borderRadius: '15px',
+                        color: '#fff',
+                        fontFamily: 'Space Mono, monospace',
+                        fontSize: '1rem',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#00f2fe';
+                        e.target.style.boxShadow = '0 0 20px rgba(0, 242, 254, 0.3)';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(0, 242, 254, 0.3)';
+                        e.target.style.boxShadow = 'none';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                      }}
+                    />
+
+                    <textarea
+                      placeholder="Your Message"
+                      rows="5"
+                      value={formData.message}
+                      onChange={(e) => setFormData({...formData, message: e.target.value})}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '18px 25px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(0, 242, 254, 0.3)',
+                        borderRadius: '15px',
+                        color: '#fff',
+                        fontFamily: 'Space Mono, monospace',
+                        fontSize: '1rem',
+                        transition: 'all 0.3s ease',
+                        resize: 'vertical',
+                        minHeight: '150px'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#00f2fe';
+                        e.target.style.boxShadow = '0 0 20px rgba(0, 242, 254, 0.3)';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(0, 242, 254, 0.3)';
+                        e.target.style.boxShadow = 'none';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                      }}
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting || isSuccess}
+                      style={{
+                        background: 'linear-gradient(135deg, #00f2fe, #4facfe)',
+                        color: '#0a0a19',
+                        border: 'none',
+                        padding: '18px 40px',
+                        fontSize: '1.2rem',
+                        fontFamily: 'Orbitron, sans-serif',
+                        fontWeight: '700',
+                        borderRadius: '50px',
+                        cursor: (isSubmitting || isSuccess) ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.3s ease',
+                        opacity: (isSubmitting || isSuccess) ? 0.6 : 1
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSubmitting && !isSuccess) {
+                          e.target.style.transform = 'scale(1.05)';
+                          e.target.style.boxShadow = '0 0 40px rgba(0, 242, 254, 0.6)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'scale(1)';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                    >
+                      {isSubmitting ? '⏳ Sending...' : isSuccess ? '✓ Sent!' : '📨 Send Message'}
+                    </button>
+
+                    {isSuccess && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0 }}
+                        style={{
+                          textAlign: 'center',
+                          color: '#43e97b',
+                          fontSize: '1.1rem',
+                          padding: '15px',
+                          background: 'rgba(67, 233, 123, 0.1)',
+                          border: '1px solid rgba(67, 233, 123, 0.3)',
+                          borderRadius: '15px'
+                        }}
+                      >
+                        ✓ Message sent successfully!
+                      </motion.div>
+                    )}
+                  </motion.form>
+
+                  <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(0, 242, 254, 0.2)',
+                      borderRadius: '20px',
+                      padding: '40px'
+                    }}
+                  >
+                    <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.8rem', marginBottom: '30px', color: '#00f2fe' }}>
+                      Contact Information
+                    </h3>
+                    
+                    {[
+                      { icon: '📧', label: 'Email', value: 'gurumoorthys287@gmail.com' },
+                      { icon: '📱', label: 'Phone', value: '+91 9361331302' },
+                      { icon: '📍', label: 'Location', value: 'Puducherry, India' }
+                    ].map((item, index) => (
+                      <motion.div
+                        key={item.label}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.6 + index * 0.1 }}
+                        whileHover={{ x: 10, scale: 1.02 }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'start',
+                          gap: '20px',
+                          marginBottom: '30px',
+                          padding: '20px',
+                          background: 'rgba(255, 255, 255, 0.02)',
+                          borderRadius: '15px',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <span style={{ fontSize: '2rem', flexShrink: 0 }}>{item.icon}</span>
+                        <div>
+                          <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.5)', marginBottom: '5px' }}>
+                            {item.label}
+                          </div>
+                          <div style={{ fontSize: '1.05rem', color: 'rgba(255, 255, 255, 0.9)' }}>
+                            {item.value}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          );
+        };
+        const ArticlesPage = () => {
+          const articles = [
+            {
+              title: 'Building IoT Solutions for Environmental Monitoring',
+              excerpt: 'How I developed an Air Quality Index meter using Arduino and sensors...',
+              date: 'Jan 2024',
+              readTime: '5 min',
+              category: 'IoT'
+            },
+            {
+              title: 'Getting Started with Machine Learning',
+              excerpt: 'My journey learning ML through Python and practical projects...',
+              date: 'Dec 2023',
+              readTime: '7 min',
+              category: 'AI/ML'
+            },
+            {
+              title: 'The Importance of Data Science in Modern Tech',
+              excerpt: 'Exploring how data science shapes decision-making...',
+              date: 'Nov 2023',
+              readTime: '6 min',
+              category: 'Data Science'
+            }
+          ];
+
+          return (
+            <div className="page">
+              <div className="page-content">
+                <motion.h2
+                  className="page-title"
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Featured Articles
+                </motion.h2>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px', marginBottom: '50px' }}>
+                  {articles.map((article, index) => (
+                    <motion.article
+                      key={article.title}
+                      initial={{ opacity: 0, y: 50 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + index * 0.15 }}
+                      whileHover={{ 
+                        scale: 1.03,
+                        boxShadow: '0 20px 60px rgba(252, 182, 159, 0.3)'
+                      }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(252, 182, 159, 0.2)',
+                        borderRadius: '20px',
+                        padding: '35px',
+                        transition: 'all 0.3s ease',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <div style={{
+                        display: 'inline-block',
+                        background: 'rgba(252, 182, 159, 0.2)',
+                        color: '#fcb69f',
+                        padding: '8px 18px',
+                        borderRadius: '20px',
+                        fontSize: '0.85rem',
+                        fontWeight: '600',
+                        marginBottom: '20px'
+                      }}>
+                        {article.category}
+                      </div>
+
+                      <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.5rem', marginBottom: '15px', color: '#ffecd2' }}>
+                        {article.title}
+                      </h3>
+
+                      <p style={{ color: 'rgba(255, 255, 255, 0.7)', lineHeight: 1.6, marginBottom: '20px' }}>
+                        {article.excerpt}
+                      </p>
+
+                      <div style={{ display: 'flex', gap: '20px', fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.5)', marginBottom: '20px' }}>
+                        <span>📅 {article.date}</span>
+                        <span>⏱️ {article.readTime}</span>
+                      </div>
+
+                      <button style={{
+                        background: 'transparent',
+                        border: '1px solid rgba(252, 182, 159, 0.3)',
+                        color: '#fcb69f',
+                        padding: '10px 25px',
+                        borderRadius: '25px',
+                        cursor: 'pointer',
+                        fontFamily: 'Space Mono, monospace',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(252, 182, 159, 0.1)';
+                        e.target.style.transform = 'translateX(5px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'transparent';
+                        e.target.style.transform = 'translateX(0)';
+                      }}>
+                        Read More →
+                      </button>
+                    </motion.article>
+                  ))}
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                  style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', fontSize: '1.2rem' }}
+                >
+                  <p>More articles coming soon! 📝</p>
+                </motion.div>
+              </div>
+            </div>
+          );
+        };
+        const ProfilesPage = () => {
+          const profiles = [
+            {
+              name: 'GitHub',
+              icon: '💻',
+              description: 'Check out my code repositories',
+              link: '#',
+              color: '#00f2fe',
+              stats: 'Open Source Projects'
+            },
+            {
+              name: 'LinkedIn',
+              icon: '💼',
+              description: 'Connect professionally',
+              link: 'https://linkedin.com/in/gurumoorthys0506',
+              color: '#4facfe',
+              stats: 'Professional Network'
+            },
+            {
+              name: 'LeetCode',
+              icon: '🧩',
+              description: 'Problem-solving practice',
+              link: '#',
+              color: '#f093fb',
+              stats: 'DSA Challenges'
+            },
+            {
+              name: 'HackerRank',
+              icon: '🏆',
+              description: 'Competitive coding',
+              link: '#',
+              color: '#43e97b',
+              stats: 'Coding Badges'
+            }
+          ];
+
+          return (
+            <div className="page">
+              <div className="page-content">
+                <motion.h2
+                  className="page-title"
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Coding Profiles
+                </motion.h2>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '35px' }}>
+                  {profiles.map((profile, index) => (
+                    <motion.a
+                      key={profile.name}
+                      href={profile.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ 
+                        delay: 0.3 + index * 0.1,
+                        type: 'spring',
+                        stiffness: 200
+                      }}
+                      whileHover={{ 
+                        scale: 1.05,
+                        boxShadow: `0 20px 60px ${profile.color}60`,
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(0, 242, 254, 0.2)',
+                        borderRadius: '25px',
+                        padding: '40px',
+                        textAlign: 'center',
+                        transition: 'all 0.3s ease',
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        willChange: 'transform'
+                      }}
+                    >
+                      <div style={{ fontSize: '4rem', marginBottom: '20px' }}>
+                        {profile.icon}
+                      </div>
+                      
+                      <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.8rem', marginBottom: '15px', color: '#00f2fe' }}>
+                        {profile.name}
+                      </h3>
+
+                      <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: '15px' }}>
+                        {profile.description}
+                      </p>
+
+                      <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9rem' }}>
+                        {profile.stats}
+                      </div>
+                      
+                      <div style={{ marginTop: '20px', fontSize: '2rem', color: '#4facfe' }}>
+                        →
+                      </div>
+                    </motion.a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        };
+        const SocialPage = () => {
+          const socials = [
+            { 
+              name: 'LinkedIn', 
+              icon: '💼', 
+              link: 'https://linkedin.com/in/gurumoorthys0506',
+              color: '#0077b5',
+              description: 'Professional Network'
+            },
+            { 
+              name: 'GitHub', 
+              icon: '💻', 
+              link: '#',
+              color: '#333',
+              description: 'Code Repositories'
+            },
+            { 
+              name: 'Instagram', 
+              icon: '📸', 
+              link: '#',
+              color: '#E4405F',
+              description: 'Creative Content'
+            },
+            { 
+              name: 'Twitter', 
+              icon: '🐦', 
+              link: '#',
+              color: '#1DA1F2',
+              description: 'Tech Updates'
+            },
+            { 
+              name: 'YouTube', 
+              icon: '🎥', 
+              link: '#',
+              color: '#FF0000',
+              description: 'Video Content'
+            },
+            { 
+              name: 'Email', 
+              icon: '📧', 
+              link: 'mailto:gurumoorthys287@gmail.com',
+              color: '#00f2fe',
+              description: 'Direct Contact'
+            }
+          ];
+
+          return (
+            <div className="page" style={{ textAlign: 'center' }}>
+              <div className="page-content">
+                <motion.h2
+                  className="page-title"
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Connect With Me
+                </motion.h2>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  style={{ fontSize: '1.3rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '60px' }}
+                >
+                  Let's stay connected across platforms
+                </motion.p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '30px', marginBottom: '80px' }}>
+                  {socials.map((social, index) => (
+                    <motion.a
+                      key={social.name}
+                      href={social.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ 
+                        delay: 0.4 + index * 0.08,
+                        type: 'spring',
+                        stiffness: 300
+                      }}
+                      whileHover={{ 
+                        scale: 1.08,
+                        boxShadow: `0 20px 50px ${social.color}40`,
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(0, 242, 254, 0.2)',
+                        borderRadius: '20px',
+                        padding: '35px 25px',
+                        textAlign: 'center',
+                        transition: 'all 0.3s ease',
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        willChange: 'transform'
+                      }}
+                    >
+                      <div style={{ fontSize: '3.5rem', marginBottom: '15px' }}>
+                        {social.icon}
+                      </div>
+
+                      <h4 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.3rem', marginBottom: '10px', color: '#00f2fe' }}>
+                        {social.name}
+                      </h4>
+
+                      <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
+                        {social.description}
+                      </p>
+                    </motion.a>
+                  ))}
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  style={{ marginTop: '60px' }}
+                >
+                  <motion.p
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    style={{ fontSize: '2rem' }}
+                  >
+                    👋 Let's collaborate!
+                  </motion.p>
+                </motion.div>
+              </div>
+            </div>
+          );
+        };
+
+        // Navigation Component - GS Menu
+        const Navigation = ({ currentPage, setCurrentPage, pages }) => {
+          const [isMenuOpen, setIsMenuOpen] = useState(false);
+          const menuRef = useRef(null);
+
+          useEffect(() => {
+            const handleClickOutside = (event) => {
+              if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsMenuOpen(false);
+              }
+            };
+
+            if (isMenuOpen) {
+              document.addEventListener('mousedown', handleClickOutside);
+              return () => document.removeEventListener('mousedown', handleClickOutside);
+            }
+          }, [isMenuOpen]);
+
+          return (
+            <>
+              {/* GS Logo Menu Button */}
+              <motion.div
+                className={`gs-menu-button ${isMenuOpen ? 'menu-open' : ''}`}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ duration: 0.6, type: 'spring' }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                ref={menuRef}
+              >
+                <div className="logo-circle">GS</div>
+              </motion.div>
+
+              {/* Overlay */}
+              <AnimatePresence>
+                {isMenuOpen && (
+                  <motion.div
+                    className="menu-overlay"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setIsMenuOpen(false)}
+                  />
+                )}
+              </AnimatePresence>
+
+              {/* Menu Panel */}
+              <AnimatePresence>
+                {isMenuOpen && (
+                  <motion.div
+                    className="menu-panel"
+                    initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="menu-header">
+                      <div className="menu-title">GURUMOORTHY S</div>
+                      <div className="menu-subtitle">Software Engineer Portfolio</div>
+                    </div>
+
+                    <div className="menu-items">
+                      {pages.map((page, index) => (
+                        <motion.button
+                          key={page.id}
+                          className={`menu-item ${currentPage === page.id ? 'active' : ''}`}
+                          onClick={() => {
+                            setCurrentPage(page.id);
+                            setIsMenuOpen(false);
+                          }}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          whileHover={{ x: 5 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <span className="menu-item-icon">{page.icon}</span>
+                          <span className="menu-item-text">{page.name}</span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </>
+          );
+        };
+
+        // Main App
+        function Portfolio() {
+          const [currentPage, setCurrentPage] = useState('hero');
+          
+          const pages = [
+            { id: 'hero', name: 'Home', icon: '🏠', component: HeroPage },
+            { id: 'about', name: 'About', icon: '👤', component: AboutPage },
+            { id: 'cta', name: 'Hire Me', icon: '🚀', component: CTAPage },
+            { id: 'resume', name: 'Resume', icon: '📄', component: ResumePage },
+            { id: 'projects', name: 'Projects', icon: '💡', component: ProjectsPage },
+            { id: 'skills', name: 'Skills', icon: '⚡', component: SkillsPage },
+            { id: 'contact', name: 'Contact', icon: '📧', component: ContactPage },
+            { id: 'articles', name: 'Articles', icon: '📝', component: ArticlesPage },
+            { id: 'profiles', name: 'Profiles', icon: '🔗', component: ProfilesPage },
+            { id: 'social', name: 'Social', icon: '🌐', component: SocialPage }
+          ];
+
+          const currentPageObj = pages.find(p => p.id === currentPage);
+          const CurrentPageComponent = currentPageObj?.component;
+
+          return (
+            <div className="portfolio-container">
+              <ParticlesBackground />
+              <GradientBlur page={currentPage} />
+              <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} pages={pages} />
+              
+              <div className="pages-container">
+                <AnimatePresence mode="wait">
+                  <CurrentPageComponent key={currentPage} />
+                </AnimatePresence>
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Portfolio />);
+    </script>
+</body>
+</html>
